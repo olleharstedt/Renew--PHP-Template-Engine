@@ -1,0 +1,201 @@
+Hello,
+
+This is the documentation for [this template system without a name].
+
+This is a template system/engine for PHP, a bit similar to HAML but with quite another focus.
+
+Features:
+
+	1. Easy to define and use abbrevations/variables.
+	2. Assign your own control structures using anonymous functions/closures.
+	3. Use indentation to define the DOM-structure (like HAML, or Python), instead of <>, </>
+	4. No strange characters (almost), making code less intimidating.
+
+---------------------------------
+HTML TAGS, BASIC SYNTAX
+---------------------------------
+
+In this template engine, you never use < or >. Instead, we use indentation to structure up the DOM-tree.
+
+Example:
+
+table
+	tr
+		td
+			Something
+		td 
+			Another thing
+	tr
+		style
+			width: 300px;
+		td
+			More data
+			br		-- A comment
+			br
+			Hello?
+	tr
+		class
+			round_corners
+			red_background
+		td
+			"html, td, tr - all html tags
+
+You cannot use white spaces instead of tabs; you must use tabs for indentation. Adjust your text editor accordingly.
+
+The "style" above will be parsed as an attribute belonging to tr.
+
+The tag keywords are read from keywords.txt. You can edit this file if you want to add more tags, attributes, or such.
+
+As seen above, you write comments as in Lua and SQL, with two minus-signs, --. [multiline comments not implemented yet ]
+
+If you start a line with " (double quote), the words will not be parsed, avoiding keywords.
+
+---------------------------------
+VARIABLES
+---------------------------------
+
+Variables start with dollar sign, $, as in PHP, and consists of whatever characters. They cannot start with a digit, though (explanation below)!
+
+You can assign variables values both in PHP and in the template engine itself.
+
+In PHP:
+	$template = new Template("my_template_file.tpl");
+	$template->assign("my_var", "value");
+
+In template:
+
+$img
+	img			-- This is the assignment!
+		src
+			hey.jpg
+		style
+			float: left
+		class
+			round_corners
+
+After assignment, you can write '$img' to produce html-code:
+
+$img
+
+will give:
+
+<img  src="hey.jpg " style="float: left " class="round_corners ">
+
+and
+
+$my_var
+
+gives:
+
+value
+
+Variables can accept arguments, which will replace ? or $[1-9] ($1, $2, ..., $9) in the variable value.
+
+$[single digit] is reserved for variable arguments, as in the following example:
+
+$variable
+	tr
+		td
+			$1	-- first arg
+		td
+			$2	-- second arg. note that $2032450 (or whatever comes after the first digit) is parsed as $2.
+		td
+			$1	-- first arg again
+
+table
+	$variable
+		hey
+		good bye
+	$variable
+		10
+		20
+
+This will output (a bit cleaned up):
+
+<table >
+	<tr >
+		<td > hey  </td>
+		<td > good bye 	</td>
+		<td > hey	</td>
+	</tr>
+	<tr >
+		<td > 10 </td>
+		<td > 20 </td>
+		<td > 10 </td>
+	</tr>
+</table>
+
+That is one way to pass arguments to variables. The other way is using question marks, ?. The questions marks will in order be replaced by the arguments. The above example is not possible this way:
+
+$img
+	img
+		src
+			?.png		-- first argument. second ? would be second arg and so on.
+
+$img
+	hey
+$img
+	yo
+
+You're not allowed to include the pattern $[digit] in your text if you pass something to your variable. That will mess up/behaviour undefined.
+
+You can also use variables as argument to other variables.
+
+table
+	$variable
+		$img
+		good bye
+
+will output:
+
+<table >
+        <tr >
+                <td > <img  src="hey.jpg " style="float: left " class="round_corners "> </td>
+                <td > good bye </td>
+                <td > <img  src="hey.jpg " style="float: left " class="round_corners "> </td>
+        </tr>
+</table>
+
+
+---------------------------------
+FUNCTIONS
+---------------------------------
+
+Use anonymous functions for control structures. Example of looping an array:
+
+
+
+---------------------------------
+CAPTCHAS
+---------------------------------
+
+In html, style is both an attribute and a tag. This leads to a clash of keywords here. This is one work-around: you edit keywords.txt to decide which one you prefer - style as an attribute or as a tag. If you use style as an attribute (default), you can use " (quote) and then normal html brackets to escape parsing:
+
+html
+	head
+		"<style>
+		"	#myid { width: 200px; }
+		"</style>
+	body
+		table
+			style
+				width: 100px;
+
+If you use style as tag, you can write your in-line styles _at the same line_ as the tag. It will then be parsed "as is":
+
+[test this!!!]
+html
+	head
+		style
+			#id 
+			{
+				width: 200px;
+			}
+	body
+		table style="width: 100px;"		-- this is possible with all attributes
+			tr
+				td
+					etc
+		table
+			style
+				width: 100px;		-- erroneous!
