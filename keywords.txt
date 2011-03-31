@@ -1,0 +1,39 @@
+# This file containt keywords for the parser.
+# Firts column indicates keyword, second class.
+# The instance of the class is created using reflection, so the class name must be correct.
+# Words must be separated by tabs.
+# As for now, no new line is allowed between this comment and the code.
+html 	tagnode
+head 	tagnode
+body 	tagnode
+div 	tagnode
+table 	tagnode
+tr 		tagnode
+td 		tagnode
+ul		tagnode
+li		tagnode
+a		tagnode
+script	tagnode
+title	tagnode
+h1		tagnode
+h2		tagnode
+h3		tagnode
+h4		tagnode
+h5		tagnode
+h6		tagnode
+p		tagnode
+span	tagnode
+input	nonclosingtagnode
+img		nonclosingtagnode
+br		nonclosingtagnode
+link	nonclosingtagnode
+meta	nonclosingtagnode
+src		attributenode
+style	attributenode
+type	attributenode
+href	attributenode
+id		attributenode
+class	attributenode
+alt		attributenode
+doctype	abbrevationnode		<!doctype html>
+utf-8	abbrevationnode		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
